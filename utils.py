@@ -151,7 +151,8 @@ def data_type_checks(row):
         # we know that no values after the State column will be a state code,
         # merge data on address
         # assuming business name is not the same as a state code
-        row = [row[0]] + [' '.join(row[1:-4])] + row[-4:]
+        row = [row[0]] + [' '.join(row[1:-4])] + row[-4:] # combine splitted
+                                                          # values
         if row[3] in state_codes:
             pass
         else:
@@ -163,7 +164,8 @@ def data_type_checks(row):
         except ValueError:
             return None
     elif len(row[4]) < 5:
-        row = row[0:4] + [''.join(row[4:-1])] + [row[-1]]
+        row = row[0:4] + [''.join(row[4:-1])] + [row[-1]] # combine splitted
+                                                          # values
         if len(row[4]) == 5:
             try:
                 int(row[4]) # test if its an integer
@@ -173,6 +175,37 @@ def data_type_checks(row):
             return None
     else:
         return None
+    return row
+
+def find_unclosed_quote(row):
+    """This function identifies elements in a row that have an uneven number of
+    quotations.  If a element in a row has an uneven number of quotes,
+    it attempts to fix the problem by inserting a quote before the next quote
+    or space in the element.  If neither of those conditions is satisfied,
+    it inserts a quote at the beginning of the element.
+
+    Args:
+        row: the current row of data from the file that's having it's id
+        checked.
+
+    Returns:
+        row: returns the cleaned row of data for quote errors if there are any.
+    """
+    for i in range(len(row)):
+        quote_counter = 0
+        for char in row[i]:
+            if char == '"':
+                quote_counter += 1
+        if quote_counter % 2 != 0:
+            end_quote = False
+            insert_index = 0
+            for j in range(len(row[i]), 0, -1):
+                if row[i][j-1] == '"' and not end_quote:
+                    end_quote = True
+                elif (row[i][j-1] == '"' or row[i][j-1] == ' ') and end_quote:
+                    insert_index = j + 1
+                    break
+            row[i] = row[i][:j-1] + '"' + row[i][j-1:]
     return row
 
 def row_by_row_check(data_file, delimiter, header_len):
@@ -211,7 +244,8 @@ def row_by_row_check(data_file, delimiter, header_len):
                 id_check = check_id(cache_prev_row, set_of_ids)
                 data_check = data_type_checks(cache_prev_row)
                 if id_check and data_check:
-                    output_clean_data.append(','.join(data_check))
+                    quote_checked_row = find_unclosed_quote(data_check)
+                    output_clean_data.append(','.join(quote_checked_row))
                 else:
                     output_dirty_data.append(','.join(cache_prev_row))
                 cache_prev_row = []
@@ -223,7 +257,8 @@ def row_by_row_check(data_file, delimiter, header_len):
             id_check = check_id(row, set_of_ids)
             data_check = data_type_checks(row)
             if id_check and data_check:
-                output_clean_data.append(','.join(data_check))
+                quote_checked_row = find_unclosed_quote(data_check)
+                output_clean_data.append(','.join(quote_checked_row))
             else:
                 output_dirty_data.append(','.join(row))
     return '\n'.join(output_clean_data), '\n'.join(output_dirty_data)
