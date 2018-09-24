@@ -26,13 +26,13 @@ To run the program, simply put all the delimited files into the 'data' directory
 ```bash
 python csv_cleaner.py
 ```
-The cleaned files will be outputted into the 'processed_files/cleaned_files/' directory.  Any rows of data that couldn't be cleaned will be put into the 'processed_files/dirty_files/' directory.
+The cleaned files will be outputted into the 'processed_data/cleaned_files/' directory.  Any rows of data that couldn't be cleaned will be put into the 'processed_data/dirty_files/' directory.
 
-The rules engine for executing data quality checks specific to the data are listed in the utils.data_type_checks function.  This function will need to be changed when the structure of the data changes.  This is the only manual change necessary for this program, data quality fixes including empty rows, handling line breaks inside rows, encoding issues, duplicate ids, and unmatched quotations are handled outside of utils.data_type_checks and don't need to be adjusted.  Ideally, this program will clean a delimited file enough for it to be properly loaded into a database or another program.
+The rules engine for executing data quality checks specific to the data are listed in the utils.data_type_checks function.  This function will need to be changed when the structure of the data changes.  This is the only manual change necessary for this program; data quality fixes including empty rows, handling line breaks inside rows, encoding issues, duplicate ids, and unmatched quotations are handled outside of utils.data_type_checks and don't need to be adjusted.  Ideally, this program will clean a delimited file enough for it to be properly loaded into a database or another program.
 
 Testing
 -------
-I created a test case for this program by manually cleaning example.csv and comparing it to the output of csv_cleaner.py.  To repeat the test, run:
+I created a test case for this program by manually cleaning example.csv and comparing it to the output of csv_cleaner.py.  The manually cleaned file is called example_clean.csv and is stored in the processed_data/cleaned_files directory.  To repeat the test, run:
 ```bash
 python -m unittest test_clean_csv.py
 ```
