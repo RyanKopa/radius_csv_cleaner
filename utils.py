@@ -217,10 +217,11 @@ def row_by_row_check(data_file, delimiter, header_len):
     equal to the header length as this means that the cache is filled with
     an incomplete row of data.
     Once the cache is filled or a row with a length greater than or equal to
-    the header is found, the data cleaning functions (check_id and
-    data_type_checks) are called to check if the row of data is clean or
-    can be cleaned.  If the row is successfully cleaned, it is added to
-    output_clean_data, else the dirty rows are added to output_dirty_data.
+    the header is found, the data cleaning functions (check_id,
+    find_unclosed_quote, data_type_checks) are called to check if the row
+    of data is clean or can be cleaned.  If the row is successfully cleaned,
+    it is added to output_clean_data, else the dirty rows are added to
+    output_dirty_data.
 
     Args:
         data_file: contents of the file that are inspected row by row.
