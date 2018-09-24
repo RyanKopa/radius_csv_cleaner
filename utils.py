@@ -203,9 +203,9 @@ def find_unclosed_quote(row):
                 if row[i][j-1] == '"' and not end_quote:
                     end_quote = True
                 elif (row[i][j-1] == '"' or row[i][j-1] == ' ') and end_quote:
-                    insert_index = j + 1
+                    insert_index = j
                     break
-            row[i] = row[i][:j-1] + '"' + row[i][j-1:]
+            row[i] = row[i][:insert_index] + '"' + row[i][insert_index:]
     return row
 
 def row_by_row_check(data_file, delimiter, header_len):
